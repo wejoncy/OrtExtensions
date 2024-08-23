@@ -2,7 +2,6 @@
 import os
 print(os.getpid())
 import sys
-sys.path.insert(0, '/home/jicwen/work/onnxruntime/build/Linux/Debug/build/lib')
 
 os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 os.environ['CUDA_VISIBLE_DEVICES'] = '1'
@@ -77,7 +76,7 @@ def create_custom_onnx():
 
     onnx_out_names = ("last_hidden_state",)
     
-    tokenizer = transformers.AutoTokenizer.from_pretrained('../Mistral-7B-v0.1-GPTQ', token='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')
+    tokenizer = transformers.AutoTokenizer.from_pretrained('../Mistral-7B-v0.1-GPTQ')
     max_seq_length = 256
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "right"
@@ -91,7 +90,7 @@ def create_custom_onnx():
     torch.onnx.export(model=torch_module, args=tuple(onnx_inputs), f=str('custom_addpadding_op_test.onnx'), verbose=False, opset_version=17,
                       input_names=onnx_inp_names, output_names=onnx_out_names, dynamic_axes=onnx_dynamic_axes)
 
-    custom_op_library_path = '/home/jicwen/work/ort_custom_pad_unpad/build/libcustom_op_library.so'
+    custom_op_library_path = 'libcustom_op_library.so'
     session_options = onnxruntime.SessionOptions()
     session_options.register_custom_ops_library(custom_op_library_path)
     ort_sess = onnxruntime.InferenceSession('custom_addpadding_op_test.onnx', sess_options=session_options, providers=['CUDAExecutionProvider'])
@@ -104,13 +103,13 @@ def create_custom_onnx():
 
 
 create_custom_onnx()
-custom_op_library_path = '/home/jicwen/work/ort_custom_pad_unpad/build/libcustom_op_library.so'
+custom_op_library_path = 'libcustom_op_library.so'
 session_options = onnxruntime.SessionOptions()
 session_options.register_custom_ops_library(custom_op_library_path)
 ort_sess = onnxruntime.InferenceSession('custom_op_test.onnx', sess_options=session_options, providers=['CUDAExecutionProvider'])
 
 
-tokenizer = transformers.AutoTokenizer.from_pretrained('../Mistral-7B-v0.1-GPTQ', token='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')
+tokenizer = transformers.AutoTokenizer.from_pretrained('../Mistral-7B-v0.1-GPTQ')
 
 max_seq_length = 256
 
